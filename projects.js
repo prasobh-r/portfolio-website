@@ -71,7 +71,7 @@ const PROJECTS = [
       heading: `Business Impact`,
       text: `Modeled a renewal-improvement scenario projecting ≈₹26.8K/month (~₹3.2L annualized) in recoverable revenue; the prioritizer ranks accounts by revenue-at-risk and recommends "Standard Retention Outreach" or "Escalate to CS Manager" per account.`
     }
-  },/*
+  }, /*
   {
     title: `Marketing Intelligence Analytics`,
     tags: [`SQL Server`, `T-SQL`, `Excel`],
@@ -92,8 +92,8 @@ const PROJECTS = [
       heading: `Recommendation`,
       text: `Protect the Champion/Loyal segment (46% of customers, 84% of revenue) with retention priority over broad discounting; investigate Campaign2's targeting and offer before reusing it; and use RFM segment as a targeting filter going forward — Champions respond at 7.6× the rate of At Risk customers.`
     }
-  }, */
-    
+  },*/
+
   {
     // ⚠️ TWO PLACEHOLDERS BELOW — this card will look broken until both are fixed:
     //   1. `image`  — upload a cover file to images/ using this exact filename,
@@ -124,12 +124,12 @@ const PROJECTS = [
       text: `Because no single feature dominates, a one-lever underwriting fix wouldn't meaningfully sharpen approval decisions — reflected in the dashboard's third page, which pairs segmentation with a live score-cutoff simulator showing the real trade-off between bad loans declined and good loans lost at any threshold.`
     }
   },
-  {
+    {
     title: `HR Attrition Analytics — Workforce Insights Dashboard`,
     tags: [`Python`, `SQL`, `Power BI`, `DAX`, `Power Query`],
     dataset: `Public dataset`,
     image: `images/cover-hr-attrition.png`,
-    github: `https://github.com/prasobh-r/Data_Analyst_Projects`,
+    github: `https://github.com/prasobh-r/Data_Analyst_Projects/tree/main/HR-Attrition-Analytics`,
     problem: `Analyze employee attrition patterns and identify workforce segments that may need further investigation to support evidence-informed HR decisions.`,
     scope: `Analyzed 1,191 employee records, including 515 attrition records and 676 active employees, covering job-related factors, engagement and work-life balance.`,
     process: `Used Python and Pandas for data cleaning and exploratory analysis, SQL for structured analysis, and Power BI with DAX to present workforce KPIs and attrition patterns.`,

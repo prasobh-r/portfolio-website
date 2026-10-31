@@ -14,7 +14,7 @@ A plain static site: HTML, CSS and vanilla JavaScript. There is no build step, f
 |---|---|
 | **Hero** | Role line (Data Analyst \| SQL • Power BI • Excel • Python), short summary, resume download, contact icons |
 | **About** | Short analytical approach and three workplace results |
-| **Featured Projects** | Six case-study cards with filters (see below) |
+| **Projects** | Four featured case studies plus an "Additional projects" group, with filters (see below) |
 | **Experience & Education** | Work history, degrees and the Google Data Analytics certificate |
 | **Skills** | Core tools (SQL, Power BI, Excel, data quality) and working knowledge (Python, Tableau) |
 | **How I Work** | Five-step analytics workflow |
@@ -55,7 +55,7 @@ portfolio-website/
 ## How to update it
 
 ### Add or edit a project
-Everything about a project lives in **`projects.js`**. Copy one block in the `PROJECTS` array, edit the values and set `featured: true`. Cards and "Case Study 01…" numbers follow the order of the blocks.
+Everything about a project lives in **`projects.js`**. Copy one block in the `PROJECTS` array, edit the values and set `featured: true`. Add `tier: 'additional'` to list it under "Additional projects" instead of the main grid. Cards and "Case Study 01…" numbers follow the order of the blocks.
 
 Key fields: `cardTitle`, `label`, `dataType` (`real`, `public` or `synthetic`), `dataLabel`, `problemShort`, `highlight`, `modelled` (adds the estimate note), `chips`, `github`, and the popup fields `problem`, `scope`, `process`, `findings`, `rigor`, `impact`.
 

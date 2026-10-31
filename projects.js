@@ -6,6 +6,7 @@
    & are safe. Avoid a literal backtick or ${ inside.
 
    Fields shown on the CARD:
+     tier           `additional` puts the card under "Additional projects" (default: featured)
      cardTitle      title
      label          pill, e.g. `Power BI · SQL · DAX`
      accent         `cyan` or `green`
@@ -106,6 +107,7 @@ const PROJECTS = [
   },
   {
     title: `RavenStack — Subscription Intelligence & Revenue Recovery Platform`,
+    tier: `additional`,
     cardTitle: `RavenStack Subscription Intelligence & Revenue Recovery`,
     label: `Python · SQL · Power BI`,
     accent: `cyan`,
@@ -221,6 +223,7 @@ const PROJECTS = [
   },
   {
     title: `HR Attrition Analytics — Workforce Insights Dashboard`,
+    tier: `additional`,
     cardTitle: `HR Attrition Analytics Dashboard`,
     label: `Python · SQL · Power BI`,
     accent: `cyan`,
@@ -418,45 +421,80 @@ const PROJECTS = [
     return card;
   }
 
-  function applyFilter(id, grid, filterWrap) {
-    var visible = [];
-    Array.prototype.forEach.call(grid.children, function (card) {
-      var cats = (card.getAttribute('data-categories') || '').split(' ');
-      var show = id === 'all' || cats.indexOf(id) !== -1;
-      card.hidden = !show;
-      card.classList.remove('span-full');
-      if (show) { card.classList.add('in'); visible.push(card); }
+  function visibleCards(grid) {
+    return Array.prototype.filter.call(grid.children, function (c) { return !c.hidden; });
+  }
+
+  function equalise() {
+    var cards = document.querySelectorAll('.case-card');
+    Array.prototype.forEach.call(cards, function (c) { c.style.minHeight = ''; });
+    if (!window.matchMedia('(min-width: 821px)').matches) return;
+    var max = 0;
+    Array.prototype.forEach.call(cards, function (c) {
+      if (!c.hidden) max = Math.max(max, c.getBoundingClientRect().height);
     });
-    if (visible.length > 1 && visible.length % 2 === 1) {
-      visible[visible.length - 1].classList.add('span-full');
+    if (max) Array.prototype.forEach.call(cards, function (c) { c.style.minHeight = Math.ceil(max) + 'px'; });
+  }
+
+  function applyFilter(id, grids, filterWrap) {
+    grids.forEach(function (grid) {
+      Array.prototype.forEach.call(grid.children, function (card) {
+        var cats = (card.getAttribute('data-categories') || '').split(' ');
+        var show = id === 'all' || cats.indexOf(id) !== -1;
+        card.hidden = !show;
+        card.classList.remove('span-full');
+        if (show) card.classList.add('in');
+      });
+      var vis = visibleCards(grid);
+      if (vis.length > 1 && vis.length % 2 === 1) vis[vis.length - 1].classList.add('span-full');
+    });
+    var moreHead = document.getElementById('moreHead');
+    var moreGrid = document.getElementById('moreList');
+    if (moreHead && moreGrid) {
+      var none = visibleCards(moreGrid).length === 0;
+      moreHead.hidden = none;
+      moreGrid.hidden = none;
     }
     Array.prototype.forEach.call(filterWrap.children, function (b) {
       b.setAttribute('aria-pressed', b.getAttribute('data-filter') === id ? 'true' : 'false');
     });
+    equalise();
   }
 
   function render() {
     var grid = document.getElementById('caseList');
+    var moreGrid = document.getElementById('moreList');
     var filterWrap = document.getElementById('caseFilters');
     if (!grid) return;
     grid.innerHTML = '';
+    if (moreGrid) moreGrid.innerHTML = '';
 
-    PROJECTS.filter(function (p) { return p.featured; }).forEach(function (p, i) {
-      grid.appendChild(buildCard(p, i));
+    var n = 0;
+    PROJECTS.filter(function (p) { return p.featured && p.tier !== 'additional'; }).forEach(function (p) {
+      grid.appendChild(buildCard(p, n++));
+    });
+    PROJECTS.filter(function (p) { return p.featured && p.tier === 'additional'; }).forEach(function (p) {
+      (moreGrid || grid).appendChild(buildCard(p, n++));
     });
 
     if (filterWrap) {
+      var grids = moreGrid ? [grid, moreGrid] : [grid];
       filterWrap.innerHTML = '';
       CATEGORIES.forEach(function (c) {
         var b = el('button', { className: 'case-filter', text: c.label });
         b.type = 'button';
         b.setAttribute('data-filter', c.id);
         b.setAttribute('aria-pressed', c.id === 'all' ? 'true' : 'false');
-        b.addEventListener('click', function () { applyFilter(c.id, grid, filterWrap); });
+        b.addEventListener('click', function () { applyFilter(c.id, grids, filterWrap); });
         filterWrap.appendChild(b);
       });
-      applyFilter('all', grid, filterWrap);
-      Array.prototype.forEach.call(grid.children, function (c) { c.classList.remove('in'); });
+      applyFilter('all', grids, filterWrap);
+      grids.forEach(function (g) {
+        Array.prototype.forEach.call(g.children, function (c) { c.classList.remove('in'); });
+      });
+      window.addEventListener('resize', equalise);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(equalise);
+      window.addEventListener('load', equalise);
     }
   }
 

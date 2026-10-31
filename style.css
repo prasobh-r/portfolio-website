@@ -727,3 +727,9 @@ main section.contact-section{padding-bottom:var(--space-6);}
 .nav-toggle{padding:12px 10px;}
 @media (min-width:821px){.case-grid{grid-auto-rows:1fr;}}
 .connect-foot-links a{gap:6px;}
+
+/* Additional projects group */
+.more-head{margin:var(--space-6) 0 var(--space-4);}
+.more-head[hidden],#moreList[hidden]{display:none;}
+.more-head h3{font-size:clamp(1.25rem,2vw,1.5rem);}
+.more-head p{margin:6px 0 0;font-size:14px;color:var(--slate);}

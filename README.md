@@ -1,6 +1,6 @@
 # Prasobh R — Data Analyst Portfolio
 
-Personal portfolio website for **Prasobh R**, a Data Analyst working with **SQL, Power BI, Excel and Python**. It presents business reporting, KPI dashboards and six end-to-end analytics case studies.
+Personal portfolio website for **Prasobh R**, a Data Analyst working with **SQL, Power BI, Excel and Python**. It presents business reporting, KPI dashboards and seven end-to-end analytics case studies.
 
 **Live site:** https://prasobh-r.github.io/portfolio-website/
 
@@ -15,21 +15,24 @@ A plain static site: HTML, CSS and vanilla JavaScript. There is no build step, f
 | **Hero** | Role line (Data Analyst \| SQL • Power BI • Excel • Python), short summary, resume download, contact icons |
 | **About** | Short analytical approach and three workplace results |
 | **Projects** | Four featured case studies plus an "Additional projects" group, with filters (see below) |
-| **Experience & Education** | Work history, degrees and the Google Data Analytics certificate |
+| **Experience & Education** | Work history, degrees and two certificates (Google Data Analytics, NPTEL Database Management Systems) |
 | **Skills** | Core tools (SQL, Power BI, Excel, data quality) and working knowledge (Python, Tableau) |
 | **How I Work** | Five-step analytics workflow |
 | **Contact** | Email, phone, LinkedIn, GitHub and a contact form |
 
 ### Projects shown
 
-1. **Business Performance 360°** — Power BI executive dashboard on a synthetic retail dataset
-2. **Bank Risk Intelligence** — WOE/IV credit scorecard on real LendingClub data
-3. **RavenStack Subscription Intelligence** — churn and revenue-at-risk analysis on a synthetic SaaS dataset
-4. **Healthcare ED Throughput Optimization** — patient flow, LWBS patterns and significance tests
-5. **Marketing Intelligence Analytics** — RFM segmentation and campaign response in T-SQL
+1. **Bank Risk Intelligence** — WOE/IV credit scorecard on real LendingClub data
+2. **Kerala Essential Commodities** — Advanced Excel MIS price-risk early-warning pack on 700K+ official daily price records
+3. **Business Performance 360°** — Power BI executive dashboard on a synthetic retail dataset
+4. **Marketing Intelligence Analytics** — RFM segmentation and campaign response in T-SQL
+5. **RavenStack Subscription Intelligence** — churn and revenue-at-risk analysis on a synthetic SaaS dataset
 6. **HR Attrition Analytics** — workforce attrition patterns from a public survey dataset
+7. **Healthcare ED Throughput Optimization** — patient flow, LWBS patterns and significance tests
 
-Each card shows a problem statement, key results, tools, a data-source tag, a **View Case Study** popup (problem, data, approach, findings, limits, impact) and a **View Code on GitHub** link.
+Cards 1-4 are featured; 5-7 sit under "Additional projects".
+
+Each card shows a dashboard screenshot, a problem statement, key results, a one-line "Shows:" summary, tools, a data-source tag, a **View Case Study** popup (problem, data, approach, findings, limits, impact) and a **View Code on GitHub** link.
 
 **About the numbers:** projects use public or self-generated practice datasets. Figures marked "modelled estimate" are project analysis estimates, not actual client or business results.
 
@@ -46,7 +49,7 @@ portfolio-website/
 ├── Prasobh_R_Data_Analyst_Resume.pdf       downloadable resume
 ├── images/
 │   ├── avatar.jpg / avatar.webp            profile photo
-│   └── cover-*.webp                        optional project images
+│   └── shot-*.webp                         project dashboard screenshots (one per project)
 └── README.md
 ```
 
@@ -57,7 +60,7 @@ portfolio-website/
 ### Add or edit a project
 Everything about a project lives in **`projects.js`**. Copy one block in the `PROJECTS` array, edit the values and set `featured: true`. Add `tier: 'additional'` to list it under "Additional projects" instead of the main grid. Cards and "Case Study 01…" numbers follow the order of the blocks.
 
-Key fields: `cardTitle`, `label`, `dataType` (`real`, `public` or `synthetic`), `dataLabel`, `problemShort`, `highlight`, `modelled` (adds the estimate note), `chips`, `github`, and the popup fields `problem`, `scope`, `process`, `findings`, `rigor`, `impact`.
+Key fields: `cardTitle`, `label`, `dataType` (`real`, `public` or `synthetic`), `dataLabel`, `problemShort`, `highlight`, `image`, `imageAlt`, `imageSize`, `proves`, `modelled` (adds the estimate note), `chips`, `github`, and the popup fields `problem`, `scope`, `process`, `findings`, `rigor`, `impact`.
 
 ### Change text, metrics or experience
 Edit **`index.html`**. Keep numbers consistent with the resume and the project READMEs.
@@ -105,7 +108,8 @@ Repository **Settings → Pages → Deploy from a branch → `main` / root**. Th
 
 - [ ] Formspree ID added and a test message sent
 - [ ] Resume PDF matches the website (reports per month, project list)
-- [ ] All six GitHub project links open
+- [ ] All seven GitHub project links open
+- [ ] Every card shows its screenshot (images/shot-*.webp)
 - [ ] Resume download works
 - [ ] Profile photo loads
 - [ ] Link preview checked when pasted into LinkedIn or WhatsApp

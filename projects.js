@@ -18,6 +18,10 @@
      modelled       true -> adds "modelled estimate" note under highlight
      chips          tool tags
      github         "View Code on GitHub" link
+     image          screenshot, e.g. `images/shot-kerala.webp` (card thumbnail + top of case study)
+     imageAlt       alt text describing the screenshot
+     imageSize      [width, height] in pixels of the file (reserves space so the page does not jump)
+     proves         one line on what the project demonstrates (shown on the card)
    Fields shown in the expandable CASE STUDY panel:
      problem, scope, process, findings[], rigor{}, impact{}
 ============================================================ */
@@ -32,6 +36,88 @@ const CATEGORIES = [
 const MODELLED_NOTE = `Project analysis estimate from a practice dataset, not an actual client or business result.`;
 
 const PROJECTS = [
+  {
+    title: `Bank Risk Intelligence`,
+    cardTitle: `Bank Risk Intelligence`,
+    label: `Python · Credit Risk · Power BI`,
+    accent: `cyan`,
+    categories: [`ml`, `risk`],
+    dataType: `real`,
+    dataLabel: `Real data · LendingClub (Kaggle)`,
+    problemShort: `Does an independently built credit scorecard add value beyond the lender's own grading, and where does risk concentrate?`,
+    summary: `WOE/IV credit scorecard validated out-of-time and benchmarked against LendingClub grades, with a live approval-cutoff simulator.`,
+    highlight: {
+      heading: `Key Results`,
+      icon: `chart`,
+      text: `Scorecard AUC 0.671 / KS 24.06 out-of-time. Exposed a 2.7× default-rate spread (8.1%–21.7%) hidden inside LendingClub Grade B alone.`
+    },
+    chips: [`Python`, `WOE / IV Scorecard`, `SQL Server`, `Out-of-time Validation`, `Power BI`],
+    featured: true,
+    tags: [`Python`, `SQL Server`, `Power BI`],
+    image: `images/shot-bank-risk.webp`,
+    imageSize: [1600, 925],
+    imageAlt: `Bank Loan Risk Intelligence dashboard: AUC, Gini, KS and PSI cards, top features by information value, and default rates by LendingClub grade against model grade`,
+    proves: `Credit-risk modelling with out-of-time validation and honestly reported limits.`,
+    github: `https://github.com/prasobh-r/Data_Analyst_Projects/tree/main/bank-loan-risk-Intelligence`,
+    problem: `Give a consumer lending team a way to see how portfolio risk is moving, whether an independently-built model adds real value beyond the lender's own underwriting, and where risk concentrates — feeding into an actionable approval-cutoff decision rather than just descriptive charts.`,
+    scope: `150,000 real, resolved LendingClub loans (2015–2018 vintages, Fully Paid or Charged Off), via Kaggle — 21.55% overall default rate in this analysis set, elevated relative to a live book since filtering to resolved loans excludes safer, still-current recent loans. Borrower, loan-term and bureau-style fields modeled in a SQL Server star schema.`,
+    process: `Built an 8-feature WOE/IV credit scorecard in Python — deliberately excluding LendingClub's own interest-rate/grade fields to avoid leaking the answer — validated it out-of-time (trained 2015–2017, tested 2017–2018), then benchmarked it against LendingClub's real A–G grade in SQL Server before building a 3-page Power BI dashboard with a live approval-cutoff simulator.`,
+    findings: [
+      `An independent scorecard (AUC 0.671, KS 24.06, PSI 0.087) discriminates risk within every single LendingClub grade — within Grade B alone, model sub-grades span 8.1%–21.7% default, a 2.7× spread hidden inside one lender grade.`,
+      `No single feature dominates: bureau score is the strongest signal at IV 0.133, still only "Medium" strength — risk is spread thin across 8 weak-to-medium factors.`,
+      `CA, TX, NY and FL together hold ~38% of total portfolio exposure; small business loans carry a 35.1% default rate — the highest of any purpose category with a reliable sample size.`,
+      `DTI risk decile alone separates default rate from 30.9% (riskiest) to 16.0% (safest).`
+    ],
+    rigor: {
+      heading: `Analytical Rigor`,
+      text: `The raw vintage default-rate trend appears to decline sharply toward 2018 — an artifact of the resolved-loans-only filter, not real improvement. The reliable window is 2015–early 2017, where default rate rose from ~20.8% to a peak of ~27.09%. Separately, the revol_util coefficient came out sign-flipped from a known multicollinearity effect — retained and flagged as unstable rather than deleted.`
+    },
+    impact: {
+      heading: `Business Impact`,
+      text: `Because no single feature dominates, a one-lever underwriting fix wouldn't meaningfully sharpen approval decisions. The dashboard's third page pairs segmentation with a live score-cutoff simulator showing the trade-off between bad loans declined and good loans lost at any threshold.`
+    }
+  },
+  {
+    title: `Kerala Essential Commodities — Price & Supply-Stress Intelligence`,
+    cardTitle: `Kerala Essential Commodities: Price & Supply-Stress Intelligence`,
+    label: `Advanced Excel · MIS · Python`,
+    accent: `green`,
+    categories: [`bi`, `risk`],
+    dataType: `real`,
+    dataLabel: `Real data · Govt. of Kerala (Economics & Statistics)`,
+    problemShort: `Which essential commodities and districts show the strongest price pressure, and where should analysts look first to catch spikes early?`,
+    summary: `Monthly price-risk early-warning MIS pack in Excel: composite risk index, exception report, district comparisons and a one-page dashboard.`,
+    highlight: {
+      heading: `Key Results`,
+      icon: `chart`,
+      text: `701,948 daily price records (14 districts, 72 commodities, Jan 2023 to Feb 2026) turned into a 0-100 risk index. In Feb 2026, dry chillies was the only Red alert: +15.0% month on month and +41.9% year on year.`
+    },
+    chips: [`Advanced Excel`, `MIS Reporting`, `Python / Pandas`, `Risk Scoring`, `Exception Reporting`, `KPI Dashboard`],
+    featured: true,
+    tags: [`Excel`, `Python`, `MIS`],
+    image: `images/shot-kerala.webp`,
+    imageSize: [744, 973],
+    imageAlt: `Excel MIS dashboard for Kerala essential commodity prices: KPI cards, top 10 price-risk alerts, risk score charts and management commentary`,
+    proves: `Advanced Excel MIS reporting on 700K+ rows, cross-checked against pandas.`,
+    github: `https://github.com/prasobh-r/Data_Analyst_Projects/tree/main/kerala-commodity-price-risk-mis`,
+    problem: `Give analysts a monthly early-warning view of price pressure across Kerala's essential commodities, so attention goes to the items and districts most likely to need it. The score is a prices-only indicator, not a shortage forecast.`,
+    scope: `Daily retail prices from the Department of Economics and Statistics, Government of Kerala: 701,948 records, 3 Jan 2023 to 27 Feb 2026, 14 district headquarters, 70 commodities in 2023 and 72 from 2024. Zero missing prices, zero duplicate rows and zero non-positive prices were found. The cleaning, scoring and workbook are independent work, not official statistics.`,
+    process: `Cleaned four yearly source files into a fact table with commodity, district and date dimensions, aggregated daily prices to monthly, and built a 0-100 risk score from seven weighted components (momentum, volatility, deviation from the 12-month average, year-on-year change, district dispersion, breadth of rise, seasonal pressure). Red is 65 or above, Amber 40 or above. Weights, caps and thresholds are editable inputs on an Assumptions sheet. Delivered as an Excel workbook with a month and commodity selector, Top 10 alerts, a Watchlist with suggested actions, a group heatmap and a district view.`,
+    findings: [
+      `Feb 2026: dry chillies was the only Red alert (score about 75), with all 14 districts more than 10% above their own 12-month averages, a statewide pattern. Garlic and Ladies Finger were Amber.`,
+      `Coconut oil rose from about ₹165/L (Jan 2023) to a peak of about ₹466 (Oct 2025), then eased to about ₹380. Volatility stayed low because the rise was steady, which is why year-on-year change and deviation from the average are scored separately from volatility.`,
+      `Most repeatedly flagged commodities (Red months, Jan 2024 to Feb 2026): garlic 8, coconut (per 10 nos) 6, onion big 6, tomato 5.`,
+      `Red commodities per month ranged from 0 to 10, peaking in May and Jun 2024, with no Red alerts from Feb to May 2025.`
+    ],
+    rigor: {
+      heading: `Validation & Limits`,
+      text: `The scoring was built independently in Excel formulas and in pandas, and all 1,560 scored commodity-months matched. About 120,000 formulas recalculated in LibreOffice with zero errors. Limits: prices only (no arrivals, stock or rainfall), so supply stress is inferred from proxies; 88.9% of daily prices equal the previous record, so some values may be carried forward; 12 of 72 commodities are excluded for thin district coverage; weights are analyst-defined; and no backtest has yet tested whether high scores precede later price spikes.`
+    },
+    impact: {
+      heading: `Business Use`,
+      text: `Gives a monthly exception report that focuses review on a handful of flagged commodities instead of all 72. Next steps are a forecast backtest, arrivals and rainfall data, district-level risk scores and a Power Pivot model with DAX.`
+    }
+  },
   {
     title: `Business Performance 360 — End-to-End BI & Reporting Dashboard`,
     cardTitle: `Business Performance 360° Executive Dashboard`,
@@ -51,7 +137,10 @@ const PROJECTS = [
     chips: [`Excel`, `SQL Server`, `Power Query ETL`, `DAX Star Schema`, `Power BI Desktop`],
     featured: true,
     tags: [`Excel`, `SQL Server`, `ETL`, `Power BI`, `DAX`],
-    image: `images/cover-bp360.webp`,
+    image: `images/shot-bp360.webp`,
+    imageSize: [1600, 999],
+    imageAlt: `Business Performance 360 Power BI executive overview: revenue, profit, orders and delivery delay KPIs, monthly revenue trend, top cities and states, and Kerala seasonal impact`,
+    proves: `End-to-end BI: SQL ETL, DAX KPIs and a four-page Power BI report.`,
     github: `https://github.com/prasobh-r/Data_Analyst_Projects/tree/main/business-performance-360-dashboard`,
     problem: `Give management one decision-ready view across executive, geographic, risk & operations, and product-performance domains — instead of scattered source data.`,
     scope: `₹16.9 Cr in revenue across 15,000 orders (Jan 2022 – Dec 2025), spanning FMCG, Electronics and Apparel across 10 Indian states. Built on a synthetic retail dataset generated in Python to simulate a real-world reporting environment — not a real company's data.`,
@@ -68,41 +157,45 @@ const PROJECTS = [
     }
   },
   {
-    title: `Bank Risk Intelligence`,
-    cardTitle: `Bank Risk Intelligence`,
-    label: `Python · Credit Risk · Power BI`,
+    title: `Marketing Intelligence Analytics`,
+    cardTitle: `Marketing Intelligence Analytics`,
+    label: `SQL Server · T-SQL · Excel`,
     accent: `cyan`,
-    categories: [`ml`, `risk`],
-    dataType: `real`,
-    dataLabel: `Real data · LendingClub (Kaggle)`,
-    problemShort: `Does an independently built credit scorecard add value beyond the lender's own grading, and where does risk concentrate?`,
-    summary: `WOE/IV credit scorecard validated out-of-time and benchmarked against LendingClub grades, with a live approval-cutoff simulator.`,
+    categories: [`risk`],
+    dataType: `public`,
+    dataLabel: `Public dataset · Maven Analytics`,
+    problemShort: `A retail marketing team had no systematic way to tell which customers to target or which campaigns actually converted.`,
+    summary: `RFM segmentation and campaign-response analysis in T-SQL on a star schema of 2,240 customers.`,
     highlight: {
       heading: `Key Results`,
       icon: `chart`,
-      text: `Scorecard AUC 0.671 / KS 24.06 out-of-time. Exposed a 2.7× default-rate spread (8.1%–21.7%) hidden inside LendingClub Grade B alone.`
+      text: `Champions + Loyal customers are 46% of the base but 84% of revenue. Campaign 2 converted at just 1.34% against 6–15% for the other five campaigns.`
     },
-    chips: [`Python`, `WOE / IV Scorecard`, `SQL Server`, `Out-of-time Validation`, `Power BI`],
+    chips: [`SQL Server`, `T-SQL`, `RFM Segmentation`, `Window Functions`, `Excel`],
     featured: true,
-    tags: [`Python`, `SQL Server`, `Power BI`],
-    image: `images/cover-bankrisk.webp`,
-    github: `https://github.com/prasobh-r/Data_Analyst_Projects/tree/main/bank-loan-risk-Intelligence`,
-    problem: `Give a consumer lending team a way to see how portfolio risk is moving, whether an independently-built model adds real value beyond the lender's own underwriting, and where risk concentrates — feeding into an actionable approval-cutoff decision rather than just descriptive charts.`,
-    scope: `150,000 real, resolved LendingClub loans (2015–2018 vintages, Fully Paid or Charged Off), via Kaggle — 21.55% overall default rate in this analysis set, elevated relative to a live book since filtering to resolved loans excludes safer, still-current recent loans. Borrower, loan-term and bureau-style fields modeled in a SQL Server star schema.`,
-    process: `Built an 8-feature WOE/IV credit scorecard in Python — deliberately excluding LendingClub's own interest-rate/grade fields to avoid leaking the answer — validated it out-of-time (trained 2015–2017, tested 2017–2018), then benchmarked it against LendingClub's real A–G grade in SQL Server before building a 3-page Power BI dashboard with a live approval-cutoff simulator.`,
+    tags: [`SQL Server`, `T-SQL`, `Excel`],
+    image: `images/shot-marketing.webp`,
+    imageSize: [1430, 804],
+    imageAlt: `SQL Server Management Studio showing T-SQL queries and results for the Marketing Intelligence database: total customers, spend by product category and customers by country`,
+    proves: `T-SQL customer and campaign analysis that points to a targeting decision.`,
+    github: `https://github.com/prasobh-r/Data_Analyst_Projects/tree/main/marketing-intelligence-analytics`,
+    problem: `Evaluate marketing campaign performance to understand how customer segments were actually responding, and produce evidence-based targeting recommendations.`,
+    scope: `Public "Marketing Campaign" dataset (Jack Daoud, via Maven Analytics) — 2,240 customers, 28 fields, modelled as a star schema (1 dimension, 2 fact tables) in SQL Server. The dataset has no campaign cost data, so this project reports response and revenue impact only, not ROI or CAC.`,
+    process: `Ran data-quality checks (0 duplicates, 1.1% missing income), built an RFM segmentation in T-SQL using NTILE(5), then joined segment membership to campaign response and spend. Also covered Pareto revenue concentration, reusable views and a stored procedure.`,
     findings: [
-      `An independent scorecard (AUC 0.671, KS 24.06, PSI 0.087) discriminates risk within every single LendingClub grade — within Grade B alone, model sub-grades span 8.1%–21.7% default, a 2.7× spread hidden inside one lender grade.`,
-      `No single feature dominates: bureau score is the strongest signal at IV 0.133, still only "Medium" strength — risk is spread thin across 8 weak-to-medium factors.`,
-      `CA, TX, NY and FL together hold ~38% of total portfolio exposure; small business loans carry a 35.1% default rate — the highest of any purpose category with a reliable sample size.`,
-      `DTI risk decile alone separates default rate from 30.9% (riskiest) to 16.0% (safest).`
+      `Champions + Loyal Customers are 46% of customers but generate 84% of total revenue.`,
+      `Campaign 2 converted at 1.34% — roughly 5× lower than the next-worst campaign (6.43%–14.91% for the other five).`,
+      `RFM segment predicted response directly: Champions 32.73% vs. At Risk 4.33% vs. Lost 0.00% (Champions respond at 7.6× the rate of At Risk).`,
+      `Customers who accepted at least one campaign spent 2.19× more on average (₹1,001 vs. ₹458).`,
+      `843 customers (37.63%) account for 80% of revenue; Spain alone is 49% of the customer base.`
     ],
     rigor: {
-      heading: `Analytical Rigor`,
-      text: `The raw vintage default-rate trend appears to decline sharply toward 2018 — an artifact of the resolved-loans-only filter, not real improvement. The reliable window is 2015–early 2017, where default rate rose from ~20.8% to a peak of ~27.09%. Separately, the revol_util coefficient came out sign-flipped from a known multicollinearity effect — retained and flagged as unstable rather than deleted.`
+      heading: `Limits`,
+      text: `No campaign cost data exists, so ROI and CAC are not calculated. The 2.19× spend gap is a correlation — Champions may simply be both bigger spenders and likelier responders — not proof that campaigns caused the extra spend.`
     },
     impact: {
-      heading: `Business Impact`,
-      text: `Because no single feature dominates, a one-lever underwriting fix wouldn't meaningfully sharpen approval decisions. The dashboard's third page pairs segmentation with a live score-cutoff simulator showing the trade-off between bad loans declined and good loans lost at any threshold.`
+      heading: `Recommendation`,
+      text: `Protect the Champion/Loyal segment with retention priority over broad discounting, investigate Campaign 2's targeting and offer before reusing it, and use RFM segment as a targeting filter going forward.`
     }
   },
   {
@@ -125,7 +218,10 @@ const PROJECTS = [
     chips: [`Python`, `SQL Server`, `Customer Health Score`, `Cohort Retention`, `Power BI`],
     featured: true,
     tags: [`Python`, `SQL Server`, `Power BI`],
-    image: `images/cover-ravenstack.webp`,
+    image: `images/shot-ravenstack.webp`,
+    imageSize: [1600, 925],
+    imageAlt: `Power BI save campaign prioritizer: accounts needing action, revenue at risk and a ranked table of top accounts with recommended retention actions`,
+    proves: `Churn and revenue-at-risk analysis turned into a ranked retention action list.`,
     github: `https://github.com/prasobh-r/Data_Analyst_Projects/tree/main/ravenstack-subscription-intelligence`,
     problem: `Identify which subscription accounts were at risk of churning and prioritize retention outreach by revenue impact.`,
     scope: `500 accounts, 5,000 subscription records, 25,000 usage events, 2,000 support tickets and 600 churn events — a synthetic, fully anonymized SaaS dataset ("RavenStack" by River @ Rivalytics, no PII). Modeled in SQL Server, analyzed in Python, reported in Power BI.`,
@@ -142,83 +238,6 @@ const PROJECTS = [
     impact: {
       heading: `Business Impact`,
       text: `A what-if simulator models a 5% renewal-rate improvement recovering ≈₹26.8K/month (~₹3.2L annualized). The prioritizer ranks at-risk accounts by revenue impact with a rules-based action per account, e.g. "Escalate to CS Manager".`
-    }
-  },
-  {
-    title: `Healthcare ED Throughput Optimization`,
-    cardTitle: `Healthcare ED Throughput Optimization`,
-    label: `SQL Server · Python · Power BI`,
-    accent: `cyan`,
-    categories: [`bi`, `ml`],
-    dataType: `synthetic`,
-    dataLabel: `Dataset source unverified · may be simulated`,
-    problemShort: `Where do ED patients wait, and what patterns sit behind patients who leave without being seen (LWBS)?`,
-    summary: `Patient-flow intervals, LWBS patterns and statistical significance tests on 200,000 ED visits, reconciled between SQL Server and Power BI.`,
-    highlight: {
-      heading: `Key Results`,
-      icon: `chart`,
-      text: `200,000 ED visits (2019–2025), with 9.94% leaving without being seen. Five significance tests found no statistically significant link between LWBS and triage score, year, arrival hour or wait time (all p > 0.05).`
-    },
-    chips: [`SQL Server`, `Python`, `SciPy / Statsmodels`, `Hypothesis Testing`, `Power BI`, `DAX`],
-    featured: true,
-    tags: [`SQL Server`, `Python`, `Power BI`],
-    image: `images/cover-healthcare.webp`,
-    github: `https://github.com/prasobh-r/Data_Analyst_Projects/tree/main/healthcare-ed-throughput`,
-    problem: `Understand how patients move through the Emergency Department, how long they wait between care stages, what patterns appear in LWBS visits, and whether observed LWBS differences are statistically significant — while documenting how timestamp quality affects operational reporting.`,
-    scope: `200,000 visit-level ED records (49,059 distinct patients) from January 2019 to December 2025: 99,845 discharged, 80,283 admitted and 19,872 LWBS (9.94%). The dataset's original source and licence have not been verified and it may be simulated, so this is an analytical demonstration, not evidence of real hospital performance.`,
-    process: `Validated record counts and timestamp sequences in SQL Server, built analytical views and care-interval calculations, ran chi-square and Mann–Whitney tests in Python (SciPy, Statsmodels) at α = 0.05, reconciled SQL results with Power BI KPIs, and built a four-page Power BI report (overview, patient flow, LWBS deep dive, data quality and limits).`,
-    findings: [
-      `Average care intervals: arrival to triage 32.04 min, triage to doctor 66.87 min, doctor to disposition 164.37 min (each on its own eligible records).`,
-      `LWBS rate by arrival hour ranges from 9.37% (8 AM) to 10.54% (11 AM); by wait-time band, only 9.73%–10.02%.`,
-      `All five significance tests returned p > 0.05, so no statistically significant differences were detected at the 5% level.`,
-      `Data-quality issues: 9,909 visits missing a triage timestamp, 10,000 missing a doctor-seen timestamp, 1,947 with triage before arrival and 920 with disposition before doctor-seen (counts may overlap).`
-    ],
-    rigor: {
-      heading: `Data Honesty`,
-      text: `18,871 of the 19,872 LWBS records carry a doctor-seen timestamp, which questions the source's LWBS classification and is documented as a concern rather than assumed wrong. A p-value above 0.05 does not prove that no relationship exists, and the analysis shows association, not causation.`
-    },
-    impact: {
-      heading: `Takeaway`,
-      text: `Reliable ED reporting depends on valid timestamps. Before drawing operational conclusions, the LWBS classification rules need clarifying, and bed-level occupancy and financial data would be needed. No financial impact is estimated.`
-    }
-  },
-  {
-    title: `Marketing Intelligence Analytics`,
-    cardTitle: `Marketing Intelligence Analytics`,
-    label: `SQL Server · T-SQL · Excel`,
-    accent: `cyan`,
-    categories: [`risk`],
-    dataType: `public`,
-    dataLabel: `Public dataset · Maven Analytics`,
-    problemShort: `A retail marketing team had no systematic way to tell which customers to target or which campaigns actually converted.`,
-    summary: `RFM segmentation and campaign-response analysis in T-SQL on a star schema of 2,240 customers.`,
-    highlight: {
-      heading: `Key Results`,
-      icon: `chart`,
-      text: `Champions + Loyal customers are 46% of the base but 84% of revenue. Campaign 2 converted at just 1.34% against 6–15% for the other five campaigns.`
-    },
-    chips: [`SQL Server`, `T-SQL`, `RFM Segmentation`, `Window Functions`, `Excel`],
-    featured: true,
-    tags: [`SQL Server`, `T-SQL`, `Excel`],
-    image: `images/cover-marketing.webp`,
-    github: `https://github.com/prasobh-r/Data_Analyst_Projects/tree/main/marketing-intelligence-analytics`,
-    problem: `Evaluate marketing campaign performance to understand how customer segments were actually responding, and produce evidence-based targeting recommendations.`,
-    scope: `Public "Marketing Campaign" dataset (Jack Daoud, via Maven Analytics) — 2,240 customers, 28 fields, modelled as a star schema (1 dimension, 2 fact tables) in SQL Server. The dataset has no campaign cost data, so this project reports response and revenue impact only, not ROI or CAC.`,
-    process: `Ran data-quality checks (0 duplicates, 1.1% missing income), built an RFM segmentation in T-SQL using NTILE(5), then joined segment membership to campaign response and spend. Also covered Pareto revenue concentration, reusable views and a stored procedure.`,
-    findings: [
-      `Champions + Loyal Customers are 46% of customers but generate 84% of total revenue.`,
-      `Campaign 2 converted at 1.34% — roughly 5× lower than the next-worst campaign (6.43%–14.91% for the other five).`,
-      `RFM segment predicted response directly: Champions 32.73% vs. At Risk 4.33% vs. Lost 0.00% (Champions respond at 7.6× the rate of At Risk).`,
-      `Customers who accepted at least one campaign spent 2.19× more on average (₹1,001 vs. ₹458).`,
-      `843 customers (37.63%) account for 80% of revenue; Spain alone is 49% of the customer base.`
-    ],
-    rigor: {
-      heading: `Limits`,
-      text: `No campaign cost data exists, so ROI and CAC are not calculated. The 2.19× spend gap is a correlation — Champions may simply be both bigger spenders and likelier responders — not proof that campaigns caused the extra spend.`
-    },
-    impact: {
-      heading: `Recommendation`,
-      text: `Protect the Champion/Loyal segment with retention priority over broad discounting, investigate Campaign 2's targeting and offer before reusing it, and use RFM segment as a targeting filter going forward.`
     }
   },
   {
@@ -240,7 +259,10 @@ const PROJECTS = [
     chips: [`Python Pandas`, `SQL`, `DAX`, `Power Query`, `Power BI`],
     featured: true,
     tags: [`Python`, `SQL`, `Power BI`, `DAX`, `Power Query`],
-    image: `images/cover-hr-attrition.png`,
+    image: `images/shot-hr.webp`,
+    imageSize: [1600, 1212],
+    imageAlt: `Power BI Employee Attrition and Workforce Analytics dashboard: 1,191 employees, 43.24% attrition rate, and attrition by gender, age and sector`,
+    proves: `Power BI KPI dashboard with filters for sector, department, age and experience.`,
     github: `https://github.com/prasobh-r/Data_Analyst_Projects/tree/main/HR-Attrition-Analytics`,
     problem: `Analyze employee attrition patterns and identify workforce segments that may need further investigation to support evidence-informed HR decisions.`,
     scope: `1,191 survey records (515 attrition, 676 active) from the Saudi Employee Attrition Dataset on Mendeley Data, covering job-related factors, engagement and work-life balance.`,
@@ -258,6 +280,48 @@ const PROJECTS = [
     impact: {
       heading: `Business Recommendations`,
       text: `Use the dashboard to investigate engagement, work-life balance, job satisfaction and mid-career retention, then validate findings with additional workforce evidence.`
+    }
+  },
+  {
+    title: `Healthcare ED Throughput Optimization`,
+    tier: `additional`,
+    cardTitle: `Healthcare ED Throughput Optimization`,
+    label: `SQL Server · Python · Power BI`,
+    accent: `cyan`,
+    categories: [`bi`, `ml`],
+    dataType: `synthetic`,
+    dataLabel: `Dataset source unverified · may be simulated`,
+    problemShort: `Where do ED patients wait, and what patterns sit behind patients who leave without being seen (LWBS)?`,
+    summary: `Patient-flow intervals, LWBS patterns and statistical significance tests on 200,000 ED visits, reconciled between SQL Server and Power BI.`,
+    highlight: {
+      heading: `Key Results`,
+      icon: `chart`,
+      text: `200,000 ED visits (2019–2025), with 9.94% leaving without being seen. Five significance tests found no statistically significant link between LWBS and triage score, year, arrival hour or wait time (all p > 0.05).`
+    },
+    chips: [`SQL Server`, `Python`, `SciPy / Statsmodels`, `Hypothesis Testing`, `Power BI`, `DAX`],
+    featured: true,
+    tags: [`SQL Server`, `Python`, `Power BI`],
+    image: `images/shot-ed.webp`,
+    imageSize: [1600, 922],
+    imageAlt: `Power BI Healthcare ED Throughput executive overview: total visits, LWBS rate by year, visits by disposition and a data-quality investigation flag`,
+    proves: `Statistical testing and data-quality scepticism on operational data.`,
+    github: `https://github.com/prasobh-r/Data_Analyst_Projects/tree/main/healthcare-ed-throughput`,
+    problem: `Understand how patients move through the Emergency Department, how long they wait between care stages, what patterns appear in LWBS visits, and whether observed LWBS differences are statistically significant — while documenting how timestamp quality affects operational reporting.`,
+    scope: `200,000 visit-level ED records (49,059 distinct patients) from January 2019 to December 2025: 99,845 discharged, 80,283 admitted and 19,872 LWBS (9.94%). The dataset's original source and licence have not been verified and it may be simulated, so this is an analytical demonstration, not evidence of real hospital performance.`,
+    process: `Validated record counts and timestamp sequences in SQL Server, built analytical views and care-interval calculations, ran chi-square and Mann–Whitney tests in Python (SciPy, Statsmodels) at α = 0.05, reconciled SQL results with Power BI KPIs, and built a four-page Power BI report (overview, patient flow, LWBS deep dive, data quality and limits).`,
+    findings: [
+      `Average care intervals: arrival to triage 32.04 min, triage to doctor 66.87 min, doctor to disposition 164.37 min (each on its own eligible records).`,
+      `LWBS rate by arrival hour ranges from 9.37% (8 AM) to 10.54% (11 AM); by wait-time band, only 9.73%–10.02%.`,
+      `All five significance tests returned p > 0.05, so no statistically significant differences were detected at the 5% level.`,
+      `Data-quality issues: 9,909 visits missing a triage timestamp, 10,000 missing a doctor-seen timestamp, 1,947 with triage before arrival and 920 with disposition before doctor-seen (counts may overlap).`
+    ],
+    rigor: {
+      heading: `Data Honesty`,
+      text: `18,871 of the 19,872 LWBS records carry a doctor-seen timestamp, which questions the source's LWBS classification and is documented as a concern rather than assumed wrong. A p-value above 0.05 does not prove that no relationship exists, and the analysis shows association, not causation.`
+    },
+    impact: {
+      heading: `Takeaway`,
+      text: `Reliable ED reporting depends on valid timestamps. Before drawing operational conclusions, the LWBS classification rules need clarifying, and bed-level occupancy and financial data would be needed. No financial impact is estimated.`
     }
   }
 ];
@@ -312,8 +376,30 @@ const PROJECTS = [
     return d;
   }
 
+  // Screenshot helper. A missing file removes itself instead of showing a broken-image icon.
+  // defer = true keeps the file from loading until the case-study dialog is opened.
+  function buildShot(p, tag, cls, defer) {
+    if (!p.image) return null;
+    var box = el(tag, { className: cls });
+    if (tag === 'button') box.type = 'button';
+    var img = document.createElement('img');
+    if (defer) img.setAttribute('data-src', p.image);
+    else { img.src = p.image; img.loading = 'lazy'; }
+    img.alt = p.imageAlt || ((p.cardTitle || p.title) + ' dashboard screenshot');
+    img.decoding = 'async';
+    if (p.imageSize) { img.width = p.imageSize[0]; img.height = p.imageSize[1]; }
+    img.addEventListener('error', function () {
+      if (box.parentNode) box.parentNode.removeChild(box);
+      equalise();
+    });
+    box.appendChild(img);
+    return box;
+  }
+
   function buildDetail(p, id) {
     var wrap = el('div', { className: 'case-detail' });
+    var fig = buildShot(p, 'figure', 'case-detail-shot', true);
+    if (fig) wrap.appendChild(fig);
     if (p.problem) wrap.appendChild(detailBlock('Problem', p.problem));
     if (p.scope) wrap.appendChild(detailBlock('Data & scope', p.scope));
     if (p.process) wrap.appendChild(detailBlock('Approach', p.process));
@@ -339,6 +425,14 @@ const PROJECTS = [
     top.appendChild(el('span', { className: 'case-pill', text: p.label || (p.tags || []).slice(0, 3).join(' · ') }));
     top.appendChild(el('span', { className: 'case-num', text: 'Case Study ' + pad(index + 1) }));
     card.appendChild(top);
+
+    var shot = buildShot(p, 'button', 'case-shot');
+    if (shot) {
+      shot.setAttribute('aria-haspopup', 'dialog');
+      shot.setAttribute('aria-label', 'View case study: ' + (p.cardTitle || p.title));
+      shot.addEventListener('click', openDialog);
+      card.appendChild(shot);
+    }
 
     card.appendChild(el('h3', { text: p.cardTitle || p.title }));
 
@@ -369,6 +463,13 @@ const PROJECTS = [
       card.appendChild(box);
     }
 
+    if (p.proves) {
+      var pr = el('p', { className: 'case-proves' });
+      pr.appendChild(el('strong', { text: 'Shows: ' }));
+      pr.appendChild(document.createTextNode(p.proves));
+      card.appendChild(pr);
+    }
+
     var chips = el('div', { className: 'case-chips' });
     (p.chips || p.tags || []).forEach(function (c) { chips.appendChild(el('span', { text: c })); });
     card.appendChild(chips);
@@ -389,6 +490,15 @@ const PROJECTS = [
     dlg.addEventListener('close', function () { document.documentElement.classList.remove('dialog-open'); });
     card.appendChild(dlg);
 
+    function openDialog() {
+      Array.prototype.forEach.call(dlg.querySelectorAll('img[data-src]'), function (im) {
+        im.src = im.getAttribute('data-src');
+        im.removeAttribute('data-src');
+      });
+      document.documentElement.classList.add('dialog-open');
+      if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
+    }
+
     var foot = el('div', { className: 'case-foot' });
     var actions = el('div', { className: 'case-actions' });
 
@@ -396,10 +506,7 @@ const PROJECTS = [
     toggle.type = 'button';
     toggle.setAttribute('aria-haspopup', 'dialog');
     toggle.innerHTML = ICONS.book + '<span class="case-toggle-label">View Case Study</span>';
-    toggle.addEventListener('click', function () {
-      document.documentElement.classList.add('dialog-open');
-      if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
-    });
+    toggle.addEventListener('click', openDialog);
     actions.appendChild(toggle);
 
     var link = el('a', { className: 'case-link' });
@@ -429,11 +536,13 @@ const PROJECTS = [
     var cards = document.querySelectorAll('.case-card');
     Array.prototype.forEach.call(cards, function (c) { c.style.minHeight = ''; });
     if (!window.matchMedia('(min-width: 821px)').matches) return;
-    var max = 0;
-    Array.prototype.forEach.call(cards, function (c) {
-      if (!c.hidden) max = Math.max(max, c.getBoundingClientRect().height);
+    // Equalise each grid on its own. An odd card out stays the same width as the others (no full-width card).
+    Array.prototype.forEach.call(document.querySelectorAll('.case-grid'), function (grid) {
+      var group = visibleCards(grid);
+      var max = 0;
+      group.forEach(function (c) { max = Math.max(max, c.getBoundingClientRect().height); });
+      if (max) group.forEach(function (c) { c.style.minHeight = Math.ceil(max) + 'px'; });
     });
-    if (max) Array.prototype.forEach.call(cards, function (c) { c.style.minHeight = Math.ceil(max) + 'px'; });
   }
 
   function applyFilter(id, grids, filterWrap) {
@@ -442,11 +551,8 @@ const PROJECTS = [
         var cats = (card.getAttribute('data-categories') || '').split(' ');
         var show = id === 'all' || cats.indexOf(id) !== -1;
         card.hidden = !show;
-        card.classList.remove('span-full');
         if (show) card.classList.add('in');
       });
-      var vis = visibleCards(grid);
-      if (vis.length > 1 && vis.length % 2 === 1) vis[vis.length - 1].classList.add('span-full');
     });
     var moreHead = document.getElementById('moreHead');
     var moreGrid = document.getElementById('moreList');

@@ -319,9 +319,6 @@ header.nav{
 }
 .case-card.in:hover{border-color:var(--accent-bd);transform:translateY(-4px);box-shadow:var(--shadow-card-hover);}
 .case-card[hidden]{display:none;}
-@media (min-width:821px){
-  .case-card.span-full{grid-column:1/-1;}
-}
 
 .case-top{display:flex;justify-content:space-between;align-items:center;gap:var(--space-2);margin-bottom:var(--space-3);}
 .case-pill{
@@ -733,3 +730,29 @@ main section.contact-section{padding-bottom:var(--space-6);}
 .more-head[hidden],#moreList[hidden]{display:none;}
 .more-head h3{font-size:clamp(1.25rem,2vw,1.5rem);}
 .more-head p{margin:6px 0 0;font-size:14px;color:var(--slate);}
+
+/* ---------- Project screenshots (card thumbnail + case-study dialog) ---------- */
+.case-shot{
+  display:block;width:100%;aspect-ratio:16/9;padding:0;margin:0 0 var(--space-3);
+  border:1px solid var(--hairline);border-radius:var(--radius-md);overflow:hidden;
+  background:var(--paper);cursor:zoom-in;
+}
+.case-shot img{
+  display:block;width:100%;height:100%;object-fit:cover;object-position:top center;
+  transition:transform 500ms var(--ease);
+}
+.case-shot:hover img{transform:scale(1.02);}
+.case-shot:focus-visible{outline:2px solid var(--accent-c);outline-offset:3px;}
+.case-proves{margin:0 0 var(--space-3);font-size:14px;line-height:1.55;color:var(--ink-soft);}
+.case-proves strong{color:var(--accent-c);font-weight:600;}
+.case-detail-shot{
+  flex:none;               /* .case-detail is a flex column: without this the figure shrinks to a 2px strip */
+  margin:0 0 var(--space-3);border:1px solid var(--hairline);border-radius:var(--radius-md);
+  overflow:hidden;background:var(--paper);
+}
+.case-detail-shot img{display:block;width:100%;height:auto;max-height:62vh;object-fit:contain;}
+@media (prefers-reduced-motion: reduce){
+  .case-shot img{transition:none;}
+  .case-shot:hover img{transform:none;}
+}
+

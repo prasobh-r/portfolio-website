@@ -28,20 +28,21 @@
 
 const CATEGORIES = [
   { id: `all`,  label: `All Projects` },
-  { id: `bi`,   label: `Business Intelligence` },
-  { id: `ml`,   label: `Python & ML` },
-  { id: `risk`, label: `Risk & Marketing` }
+  { id: `sql`,     label: `SQL` },
+  { id: `powerbi`, label: `Power BI` },
+  { id: `excel`,   label: `Excel` },
+  { id: `python`,  label: `Python` }
 ];
 
 const MODELLED_NOTE = `Project analysis estimate from a practice dataset, not an actual client or business result.`;
 
 const PROJECTS = [
   {
-    title: `Bank Risk Intelligence`,
-    cardTitle: `Bank Risk Intelligence`,
+    title: `Bank Loan Risk Intelligence`,
+    cardTitle: `Bank Loan Risk Intelligence`,
     label: `Python · Credit Risk · Power BI`,
     accent: `cyan`,
-    categories: [`ml`, `risk`],
+    categories: [`python`, `sql`, `powerbi`],
     dataType: `real`,
     dataLabel: `Real data · LendingClub (Kaggle)`,
     problemShort: `Does an independently built credit scorecard add value beyond the lender's own grading, and where does risk concentrate?`,
@@ -49,81 +50,126 @@ const PROJECTS = [
     highlight: {
       heading: `Key Results`,
       icon: `chart`,
-      text: `Scorecard AUC 0.671 / KS 24.06 out-of-time. Exposed a 2.7× default-rate spread (8.1%–21.7%) hidden inside LendingClub Grade B alone.`
+      text: `Out-of-time AUC 0.677 (KS 25.8). Alone it ranks slightly below the lender's own grade (0.681); combined with the grade, AUC rises to 0.701. A score cutoff of 530 approves 54.9% of test loans at an 11.7% default rate, against 18.6% overall.`
     },
     chips: [`Python`, `WOE / IV Scorecard`, `SQL Server`, `Out-of-time Validation`, `Power BI`],
     featured: true,
     tags: [`Python`, `SQL Server`, `Power BI`],
     image: `images/shot-bank-risk.webp`,
     imageSize: [1600, 925],
-    imageAlt: `Bank Loan Risk Intelligence dashboard: AUC, Gini, KS and PSI cards, top features by information value, and default rates by LendingClub grade against model grade`,
+    imageAlt: `Bank Loan Risk Intelligence dashboard, portfolio page: 150,000 loans, $2.18bn exposure, 21.55% default rate, default rate by LendingClub grade, and default rate by origination quarter for 36-month and 60-month loans with a note on the resolved-loans-only filter`,
     proves: `Credit-risk modelling with out-of-time validation and honestly reported limits.`,
     github: `https://github.com/prasobh-r/Data_Analyst_Projects/tree/main/bank-loan-risk-Intelligence`,
     problem: `Give a consumer lending team a way to see how portfolio risk is moving, whether an independently-built model adds real value beyond the lender's own underwriting, and where risk concentrates — feeding into an actionable approval-cutoff decision rather than just descriptive charts.`,
-    scope: `150,000 real, resolved LendingClub loans (2015–2018 vintages, Fully Paid or Charged Off), via Kaggle — 21.55% overall default rate in this analysis set, elevated relative to a live book since filtering to resolved loans excludes safer, still-current recent loans. Borrower, loan-term and bureau-style fields modeled in a SQL Server star schema.`,
-    process: `Built an 8-feature WOE/IV credit scorecard in Python — deliberately excluding LendingClub's own interest-rate/grade fields to avoid leaking the answer — validated it out-of-time (trained 2015–2017, tested 2017–2018), then benchmarked it against LendingClub's real A–G grade in SQL Server before building a 3-page Power BI dashboard with a live approval-cutoff simulator.`,
+    scope: `150,000 real, resolved LendingClub loans (2015–2018 vintages, Fully Paid or Charged Off), via Kaggle, with a 21.55% default rate in this analysis set. That is not a live-book rate: filtering to resolved loans leaves out loans still being repaid, which are mostly good. Borrower, loan-term and bureau-style fields are modelled in a SQL Server star schema.`,
+    process: `Built an 8-feature WOE/IV credit scorecard in Python, deliberately excluding LendingClub's own interest-rate and grade fields to avoid leaking the answer. Trained on 2015-01 to 2017-09 vintages (134,913 loans) and tested out-of-time on 2017-10 to 2018-12 (15,087 loans), benchmarked it against LendingClub's A to G grade in Python and SQL Server, then built a 3-page Power BI dashboard with a live approval-cutoff simulator.`,
     findings: [
-      `An independent scorecard (AUC 0.671, KS 24.06, PSI 0.087) discriminates risk within every single LendingClub grade — within Grade B alone, model sub-grades span 8.1%–21.7% default, a 2.7× spread hidden inside one lender grade.`,
-      `No single feature dominates: bureau score is the strongest signal at IV 0.133, still only "Medium" strength — risk is spread thin across 8 weak-to-medium factors.`,
-      `CA, TX, NY and FL together hold ~38% of total portfolio exposure; small business loans carry a 35.1% default rate — the highest of any purpose category with a reliable sample size.`,
-      `DTI risk decile alone separates default rate from 30.9% (riskiest) to 16.0% (safest).`
+      `Out-of-time performance is modest: AUC 0.677, Gini 0.353, KS 25.8, PSI 0.047 (no significant population shift). On its own the model ranks defaults slightly worse than LendingClub's grade (AUC 0.681); adding it to the grade lifts AUC to 0.701 (+0.020).`,
+      `The model still ranks risk within every LendingClub grade (AUC 0.57 to 0.62). Inside Grade B alone, default rises from 8.8% for model grade A to 19.9% for model grade F, about a 2.3× spread.`,
+      `No single feature dominates: loan term (IV 0.178) and bureau score (IV 0.137) are the only "Medium" signals and nothing is "Strong", so risk is spread across 8 weak-to-medium factors.`,
+      `CA, TX, NY and FL hold 38.2% of exposure. Small business loans default at 35.1%, the highest of any purpose with at least 1,000 loans, and 60-month loans default at 34.9% against 17.5% for 36-month loans.`,
+      `DTI deciles separate default rate from about 31% (riskiest) to 16% (safest).`
     ],
     rigor: {
       heading: `Analytical Rigor`,
-      text: `The raw vintage default-rate trend appears to decline sharply toward 2018 — an artifact of the resolved-loans-only filter, not real improvement. The reliable window is 2015–early 2017, where default rate rose from ~20.8% to a peak of ~27.09%. Separately, the revol_util coefficient came out sign-flipped from a known multicollinearity effect — retained and flagged as unstable rather than deleted.`
+      text: `The raw vintage trend falls sharply toward 2018, an artifact of the resolved-loans-only filter. Only the 2015 to 2016 Q1 vintages (about 20% default) are fully seasoned; after that, a real change in loan quality cannot be separated from the filter, so the later rise should not be read as deterioration. The out-of-time test set is the least seasoned part of the data, which is why its default rate (18.6%) is below the training rate (21.9%). One coefficient, revol_util, has a flipped sign: it overlaps with the bureau score (all variance inflation factors are below 1.5, so this is not severe multicollinearity) and was kept and flagged as unstable rather than deleted.`
     },
     impact: {
       heading: `Business Impact`,
-      text: `Because no single feature dominates, a one-lever underwriting fix wouldn't meaningfully sharpen approval decisions. The dashboard's third page pairs segmentation with a live score-cutoff simulator showing the trade-off between bad loans declined and good loans lost at any threshold.`
+      text: `No single feature dominates and the model's gain over the lender's grade is small, so the useful output is a combined ranking plus an explicit cutoff, not a one-lever underwriting fix. The dashboard's third page pairs segmentation with a live score-cutoff simulator showing the trade-off between bad loans declined and good loans lost. Which cutoff is best is a margin and volume decision the data cannot settle, since it holds no pricing or loss data.`
     }
   },
   {
-    title: `Kerala Essential Commodities — Price & Supply-Stress Intelligence`,
-    cardTitle: `Kerala Essential Commodities: Price & Supply-Stress Intelligence`,
-    label: `Advanced Excel · MIS · Python`,
-    accent: `green`,
-    categories: [`bi`, `risk`],
-    dataType: `real`,
-    dataLabel: `Real data · Govt. of Kerala (Economics & Statistics)`,
-    problemShort: `Which essential commodities and districts show the strongest price pressure, and where should analysts look first to catch spikes early?`,
-    summary: `Monthly price-risk early-warning MIS pack in Excel: composite risk index, exception report, district comparisons and a one-page dashboard.`,
+    title: `Marketing Data Quality & Customer Intelligence`,
+    cardTitle: `Marketing Data Quality & Customer Intelligence`,
+    label: `SQL Server · Power BI · Data Cleaning`,
+    accent: `cyan`,
+    categories: [`sql`, `powerbi`],
+    dataType: `public`,
+    dataLabel: `Public dataset · Maven Analytics`,
+    problemShort: `A retail marketing team needed trustworthy customer data and a way to tell which customers to target and which campaigns underperformed.`,
+    summary: `SQL data cleaning with an audit trail, validation checks, then RFM and campaign analysis on 2,240 customer records.`,
     highlight: {
       heading: `Key Results`,
       icon: `chart`,
-      text: `701,948 daily price records (14 districts, 72 commodities, Jan 2023 to Feb 2026) turned into a 0-100 risk index. In Feb 2026, dry chillies was the only Red alert: +15.0% month on month and +41.9% year on year.`
+      text: `47 suspected duplicate records excluded and 18 of 18 validation checks passed. Champions + Loyal customers are 46% of 2,193 customers but 83% of revenue; Campaign 2 was accepted by only 1.3% of customers.`
     },
-    chips: [`Advanced Excel`, `MIS Reporting`, `Python / Pandas`, `Risk Scoring`, `Exception Reporting`, `KPI Dashboard`],
+    chips: [`SQL Server`, `T-SQL`, `Data Cleaning`, `Data Validation`, `RFM Segmentation`, `Window Functions`, `Power BI`],
+    featured: true,
+    tags: [`SQL Server`, `T-SQL`, `Power BI`],
+    image: `images/shot-marketing.webp`,
+    imageSize: [1600, 900],
+    imageAlt: `Marketing Intelligence dashboard: 2,193 customers and 1,329,690 revenue; Champion and Loyal customers are 45.7% of customers and 83.2% of revenue; Campaign 2 was accepted by 1.32% of customers against 6.48% for Campaign 1; final-campaign acceptance is 34.0% for Champions and 4.4% for At Risk customers`,
+    proves: `SQL data cleaning with a documented audit trail, then customer and campaign analysis that points to a targeting decision.`,
+    github: `https://github.com/prasobh-r/Data_Analyst_Projects/tree/main/marketing-intelligence-analytics`,
+    problem: `Prepare a marketing dataset for analysis by profiling and cleaning it with documented decisions, then evaluate how customer segments responded to campaigns and produce evidence-based targeting suggestions.`,
+    scope: `Public "Marketing Campaign" dataset (Jack Daoud, via Maven Analytics): 2,240 customer records, 28 fields. After cleaning, 2,193 customers were modelled as a star schema (1 dimension, 2 fact tables). The data has no campaign cost information and does not say who received each campaign, so the project reports acceptance rates and spend only, not ROI, CAC or true conversion. The source does not state the currency.`,
+    process: `Profiled the raw table in SQL Server (nulls, duplicates, implausible values, category labels, logical consistency), then built a cleaned table with every rule logged: 47 suspected duplicates excluded to a rejected-records table, 3 implausible birth years and 1 extreme income outlier set to NULL and flagged, 7 invalid marital labels standardised. 18 validation checks reconciled rows, spend and campaign totals back to the raw table and confirmed that only the logged values changed. RFM scoring used NTILE(5) with a deterministic tie-breaker and was re-tested without 6 inconsistent records. A one-page Power BI dashboard (DAX measures, Country slicer) was built on two SQL views, with every number reconciled to the SQL results.`,
+    findings: [
+      `Champion + Loyal customers are 45.7% of customers but 83.2% of revenue. This is partly built in, since spend is one of the RFM inputs; the segments were unchanged (329 and 673 customers) when 6 inconsistent records were excluded.`,
+      `Campaign 2 was accepted by 1.32% of customers against 6.5% to 15% for the other campaigns; the gap to Campaign 1 is statistically clear (McNemar paired test, chi-square = 86.5).`,
+      `Final-campaign acceptance rises with RFM segment: Champions 34.04%, At Risk 4.37%, Lost 0.00%. This is an association at one point in time, not a prediction.`,
+      `Customers who accepted at least one campaign spend 2.19x more on average (1,002.67 vs 458.08 currency units).`,
+      `827 customers (37.7%) account for 80% of revenue, and higher-value segments buy more by catalog (27% of Champion purchases vs 8% for At Risk).`
+    ],
+    rigor: {
+      heading: `Limits`,
+      text: `No campaign cost or targeting data exists, so ROI, CAC and true conversion are not calculated; acceptance rates are shares of all customers. The spend gap and segment response are correlations, not proof that campaigns caused them. Duplicate exclusion and the Alone to Single relabel are analyst decisions recorded in the cleaning log. Missing income is concentrated in Australia (13 of 160 customers) and is not random across countries, so it was flagged and not imputed. Recency looks uniformly generated, so findings describe this dataset and may not transfer to a live customer base.`
+    },
+    impact: {
+      heading: `Recommendation`,
+      text: `Prioritise retention for the Champion and Loyal segments over broad discounting, review Campaign 2's targeting and offer before reusing it, and use RFM segment as a targeting filter. Treat these as hypotheses to test, since the data cannot show cause.`
+    }
+  },
+  {
+    title: `Kerala Essential Commodities: Price-Risk MIS`,
+    cardTitle: `Kerala Essential Commodities: Price-Risk MIS`,
+    label: `Advanced Excel · MIS · Python`,
+    accent: `green`,
+    categories: [`excel`, `python`],
+    dataType: `real`,
+    dataLabel: `Real data · Govt. of Kerala (Economics & Statistics)`,
+    problemShort: `Which essential commodities and districts show the strongest price pressure, and where should analysts focus attention each month?`,
+    summary: `Monthly price-pressure monitoring MIS pack in Excel: composite risk score, exception report, district comparisons and a one-page dashboard.`,
+    highlight: {
+      heading: `Key Results`,
+      icon: `chart`,
+      text: `701,948 daily price records (14 districts, 72 commodities, Jan 2023 to Feb 2026) turned into a 0 to 100 risk score. In Feb 2026, dry chillies was the only Red alert: +15.0% month on month and +41.9% year on year. A backtest shows the score marks spikes in progress, not coming surges.`
+    },
+    chips: [`Advanced Excel`, `MIS Reporting`, `Python / Pandas`, `Risk Scoring`, `Backtesting`, `KPI Dashboard`],
     featured: true,
     tags: [`Excel`, `Python`, `MIS`],
     image: `images/shot-kerala.webp`,
     imageSize: [744, 973],
     imageAlt: `Excel MIS dashboard for Kerala essential commodity prices: KPI cards, top 10 price-risk alerts, risk score charts and management commentary`,
-    proves: `Advanced Excel MIS reporting on 700K+ rows, cross-checked against pandas.`,
+    proves: `Advanced Excel MIS reporting on 700K+ rows, cross-checked against pandas and backtested.`,
     github: `https://github.com/prasobh-r/Data_Analyst_Projects/tree/main/kerala-commodity-price-risk-mis`,
-    problem: `Give analysts a monthly early-warning view of price pressure across Kerala's essential commodities, so attention goes to the items and districts most likely to need it. The score is a prices-only indicator, not a shortage forecast.`,
+    problem: `Give analysts a monthly view of price pressure across Kerala's essential commodities, so attention goes to the items and districts most likely to need it. The score is a prices-only indicator of current pressure, not a shortage forecast.`,
     scope: `Daily retail prices from the Department of Economics and Statistics, Government of Kerala: 701,948 records, 3 Jan 2023 to 27 Feb 2026, 14 district headquarters, 70 commodities in 2023 and 72 from 2024. Zero missing prices, zero duplicate rows and zero non-positive prices were found. The cleaning, scoring and workbook are independent work, not official statistics.`,
     process: `Cleaned four yearly source files into a fact table with commodity, district and date dimensions, aggregated daily prices to monthly, and built a 0-100 risk score from seven weighted components (momentum, volatility, deviation from the 12-month average, year-on-year change, district dispersion, breadth of rise, seasonal pressure). Red is 65 or above, Amber 40 or above. Weights, caps and thresholds are editable inputs on an Assumptions sheet. Delivered as an Excel workbook with a month and commodity selector, Top 10 alerts, a Watchlist with suggested actions, a group heatmap and a district view.`,
     findings: [
       `Feb 2026: dry chillies was the only Red alert (score about 75), with all 14 districts more than 10% above their own 12-month averages, a statewide pattern. Garlic and Ladies Finger were Amber.`,
       `Coconut oil rose from about ₹165/L (Jan 2023) to a peak of about ₹466 (Oct 2025), then eased to about ₹380. Volatility stayed low because the rise was steady, which is why year-on-year change and deviation from the average are scored separately from volatility.`,
       `Most repeatedly flagged commodities (Red months, Jan 2024 to Feb 2026): garlic 8, coconut (per 10 nos) 6, onion big 6, tomato 5.`,
-      `Red commodities per month ranged from 0 to 10, peaking in May and Jun 2024, with no Red alerts from Feb to May 2025.`
+      `Red commodities per month ranged from 0 to 10, peaking in May and Jun 2024, with no Red alerts from Feb to May 2025.`,
+      `Backtest on 1,500 scored commodity-months: Red and Amber flags were followed by a 5%+ price rise next month 29.1% and 33.0% of the time, against a 14.7% base rate. A rule using only each commodity's own history does as well, and three months after a Red flag the price was lower in 71% of cases.`
     ],
     rigor: {
       heading: `Validation & Limits`,
-      text: `The scoring was built independently in Excel formulas and in pandas, and all 1,560 scored commodity-months matched. About 120,000 formulas recalculated in LibreOffice with zero errors. Limits: prices only (no arrivals, stock or rainfall), so supply stress is inferred from proxies; 88.9% of daily prices equal the previous record, so some values may be carried forward; 12 of 72 commodities are excluded for thin district coverage; weights are analyst-defined; and no backtest has yet tested whether high scores precede later price spikes.`
+      text: `The scoring was built independently in Excel formulas and in pandas, and all 1,560 scored commodity-months matched. About 120,000 formulas recalculated in LibreOffice with zero errors. The backtest is in-sample (weights were calibrated on the same period) and shows little ability to time rises within a commodity or to rank commodities month by month, so the score is a monitoring tool, not a predictor. Other limits: prices only (no arrivals, stock or rainfall), so supply stress is inferred from proxies; 89.0% of daily prices equal the previous record, so some values may be carried forward; 12 of 72 commodities are excluded for thin district coverage; weights are analyst-defined.`
     },
     impact: {
       heading: `Business Use`,
-      text: `Gives a monthly exception report that focuses review on a handful of flagged commodities instead of all 72. Next steps are a forecast backtest, arrivals and rainfall data, district-level risk scores and a Power Pivot model with DAX.`
+      text: `Gives a monthly exception report that focuses review on a handful of flagged commodities instead of all 72, with the price direction shown beside each score so a spike that is already easing is not mistaken for a new one. Next steps: test the score on data after Feb 2026, backtest the forecasts, add arrivals and rainfall data and district-level risk scores, and build a Power Pivot model with DAX.`
     }
   },
   {
     title: `Business Performance 360 — End-to-End BI & Reporting Dashboard`,
+    tier: `additional`,
     cardTitle: `Business Performance 360° Executive Dashboard`,
     label: `Power BI · SQL · DAX`,
     accent: `cyan`,
-    categories: [`bi`],
+    categories: [`sql`, `powerbi`, `excel`],
     dataType: `synthetic`,
     dataLabel: `Synthetic data (Python-generated)`,
     problemShort: `Management had no single view of revenue, margin, regional delivery risk and product performance.`,
@@ -131,16 +177,15 @@ const PROJECTS = [
     highlight: {
       heading: `Key Results`,
       icon: `chart`,
-      text: `₹16.9 Cr revenue across 15,000 orders (+32.65% YoY). Cutting delivery delay by 2% in the highest-risk states is modelled to recover ≈₹0.08 Cr.`
+      text: `4-page Power BI report built on 15,000 synthetic orders (Jan 2022 to Dec 2025): star schema, SQL ETL and DAX KPIs. The figures show the dashboard working, not real business results.`
     },
-    modelled: true,
     chips: [`Excel`, `SQL Server`, `Power Query ETL`, `DAX Star Schema`, `Power BI Desktop`],
-    featured: true,
+    featured: false, // hidden: synthetic-data practice build. Set to true to show it again.,
     tags: [`Excel`, `SQL Server`, `ETL`, `Power BI`, `DAX`],
     image: `images/shot-bp360.webp`,
     imageSize: [1600, 999],
     imageAlt: `Business Performance 360 Power BI executive overview: revenue, profit, orders and delivery delay KPIs, monthly revenue trend, top cities and states, and Kerala seasonal impact`,
-    proves: `End-to-end BI: SQL ETL, DAX KPIs and a four-page Power BI report.`,
+    proves: `End-to-end BI build: SQL ETL, star schema, DAX KPIs and a four-page Power BI report.`,
     github: `https://github.com/prasobh-r/Data_Analyst_Projects/tree/main/business-performance-360-dashboard`,
     problem: `Give management one decision-ready view across executive, geographic, risk & operations, and product-performance domains — instead of scattered source data.`,
     scope: `₹16.9 Cr in revenue across 15,000 orders (Jan 2022 – Dec 2025), spanning FMCG, Electronics and Apparel across 10 Indian states. Built on a synthetic retail dataset generated in Python to simulate a real-world reporting environment — not a real company's data.`,
@@ -148,182 +193,21 @@ const PROJECTS = [
     findings: [
       `Revenue grew 32.65% YoY to ₹16.9 Cr at a 22.8% margin, though margin itself was flat (-0.04% vs PY).`,
       `Kerala leads at ₹5.00 Cr (26.7% of revenue) but sits at Medium delivery-risk (5.43% delay); Assam is highest-risk at 7.92%.`,
-      `Delivery delays increased during monsoon periods, and high-risk states were identified through delay analysis; Onam drives a matching demand spike.`,
+      `The dashboard surfaces delivery delay by state and season: delays rise in monsoon months and Onam drives a demand spike. Both patterns were written into the data generator.`,
       `90 products flagged low-margin, concentrated in the Accessories line.`
-    ],
-    impact: {
-      heading: `Business Impact & Recommendations`,
-      text: `Reducing delivery delay by 2% in the highest-risk states (Assam, Maharashtra, Bihar, Kerala) is modelled to recover ≈₹0.08 Cr. The dashboard also flags increasing inventory ahead of Onam and prioritizing FMCG strategy during monsoon.`
-    }
-  },
-  {
-    title: `Marketing Intelligence Analytics`,
-    cardTitle: `Marketing Intelligence Analytics`,
-    label: `SQL Server · T-SQL · Excel`,
-    accent: `cyan`,
-    categories: [`risk`],
-    dataType: `public`,
-    dataLabel: `Public dataset · Maven Analytics`,
-    problemShort: `A retail marketing team had no systematic way to tell which customers to target or which campaigns actually converted.`,
-    summary: `RFM segmentation and campaign-response analysis in T-SQL on a star schema of 2,240 customers.`,
-    highlight: {
-      heading: `Key Results`,
-      icon: `chart`,
-      text: `Champions + Loyal customers are 46% of the base but 84% of revenue. Campaign 2 converted at just 1.34% against 6–15% for the other five campaigns.`
-    },
-    chips: [`SQL Server`, `T-SQL`, `RFM Segmentation`, `Window Functions`, `Excel`],
-    featured: true,
-    tags: [`SQL Server`, `T-SQL`, `Excel`],
-    image: `images/shot-marketing.webp`,
-    imageSize: [1430, 804],
-    imageAlt: `SQL Server Management Studio showing T-SQL queries and results for the Marketing Intelligence database: total customers, spend by product category and customers by country`,
-    proves: `T-SQL customer and campaign analysis that points to a targeting decision.`,
-    github: `https://github.com/prasobh-r/Data_Analyst_Projects/tree/main/marketing-intelligence-analytics`,
-    problem: `Evaluate marketing campaign performance to understand how customer segments were actually responding, and produce evidence-based targeting recommendations.`,
-    scope: `Public "Marketing Campaign" dataset (Jack Daoud, via Maven Analytics) — 2,240 customers, 28 fields, modelled as a star schema (1 dimension, 2 fact tables) in SQL Server. The dataset has no campaign cost data, so this project reports response and revenue impact only, not ROI or CAC.`,
-    process: `Ran data-quality checks (0 duplicates, 1.1% missing income), built an RFM segmentation in T-SQL using NTILE(5), then joined segment membership to campaign response and spend. Also covered Pareto revenue concentration, reusable views and a stored procedure.`,
-    findings: [
-      `Champions + Loyal Customers are 46% of customers but generate 84% of total revenue.`,
-      `Campaign 2 converted at 1.34% — roughly 5× lower than the next-worst campaign (6.43%–14.91% for the other five).`,
-      `RFM segment predicted response directly: Champions 32.73% vs. At Risk 4.33% vs. Lost 0.00% (Champions respond at 7.6× the rate of At Risk).`,
-      `Customers who accepted at least one campaign spent 2.19× more on average (₹1,001 vs. ₹458).`,
-      `843 customers (37.63%) account for 80% of revenue; Spain alone is 49% of the customer base.`
-    ],
-    rigor: {
-      heading: `Limits`,
-      text: `No campaign cost data exists, so ROI and CAC are not calculated. The 2.19× spend gap is a correlation — Champions may simply be both bigger spenders and likelier responders — not proof that campaigns caused the extra spend.`
-    },
-    impact: {
-      heading: `Recommendation`,
-      text: `Protect the Champion/Loyal segment with retention priority over broad discounting, investigate Campaign 2's targeting and offer before reusing it, and use RFM segment as a targeting filter going forward.`
-    }
-  },
-  {
-    title: `RavenStack — Subscription Intelligence & Revenue Recovery Platform`,
-    tier: `additional`,
-    cardTitle: `RavenStack Subscription Intelligence & Revenue Recovery`,
-    label: `Python · SQL · Power BI`,
-    accent: `cyan`,
-    categories: [`bi`, `ml`, `risk`],
-    dataType: `synthetic`,
-    dataLabel: `Synthetic SaaS dataset (Rivalytics)`,
-    problemShort: `Which subscription accounts are likely to churn, why, and which should the retention team call first?`,
-    summary: `Customer health scoring, cohort retention and a Save Campaign Prioritizer that ranks accounts by revenue at risk.`,
-    highlight: {
-      heading: `Key Results`,
-      icon: `chart`,
-      text: `₹5.36L monthly recurring revenue flagged at risk across 316 active accounts. A 5% renewal-rate improvement is modelled at ≈₹3.2L/year recoverable.`
-    },
-    modelled: true,
-    chips: [`Python`, `SQL Server`, `Customer Health Score`, `Cohort Retention`, `Power BI`],
-    featured: true,
-    tags: [`Python`, `SQL Server`, `Power BI`],
-    image: `images/shot-ravenstack.webp`,
-    imageSize: [1600, 925],
-    imageAlt: `Power BI save campaign prioritizer: accounts needing action, revenue at risk and a ranked table of top accounts with recommended retention actions`,
-    proves: `Churn and revenue-at-risk analysis turned into a ranked retention action list.`,
-    github: `https://github.com/prasobh-r/Data_Analyst_Projects/tree/main/ravenstack-subscription-intelligence`,
-    problem: `Identify which subscription accounts were at risk of churning and prioritize retention outreach by revenue impact.`,
-    scope: `500 accounts, 5,000 subscription records, 25,000 usage events, 2,000 support tickets and 600 churn events — a synthetic, fully anonymized SaaS dataset ("RavenStack" by River @ Rivalytics, no PII). Modeled in SQL Server, analyzed in Python, reported in Power BI.`,
-    process: `Cleaned 5 relational tables, engineered a 0–100 Customer Health Score from usage/support/tenure signals, built a subscription funnel and 24-month cohort retention heatmap, then ranked active accounts by revenue-at-risk for a save campaign.`,
-    findings: [
-      `₹10.78L total MRR across 500 accounts; ₹5.36L of it sits with 316 active accounts flagged at risk, and 22% of accounts have churned.`,
-      `90.5% average retention across 24 monthly cohorts, with no single month showing systemic collapse.`,
-      `Churn reasons are almost evenly split across six causes (15–19% each), so no single retention lever fixes it.`
-    ],
-    rigor: {
-      heading: `Analytical Rigor`,
-      text: `A logistic-regression churn model returned a weak AUC of 0.58. Rather than force-fit or hide that, further analysis showed churn reasons split almost evenly across six causes — confirming churn here is fragmented, not driven by one fixable lever. That finding shaped the product: instead of a blanket retention play, the Save Campaign Prioritizer assigns account-specific recommended actions.`
-    },
-    impact: {
-      heading: `Business Impact`,
-      text: `A what-if simulator models a 5% renewal-rate improvement recovering ≈₹26.8K/month (~₹3.2L annualized). The prioritizer ranks at-risk accounts by revenue impact with a rules-based action per account, e.g. "Escalate to CS Manager".`
-    }
-  },
-  {
-    title: `HR Attrition Analytics — Workforce Insights Dashboard`,
-    tier: `additional`,
-    cardTitle: `HR Attrition Analytics Dashboard`,
-    label: `Python · SQL · Power BI`,
-    accent: `cyan`,
-    categories: [`bi`],
-    dataType: `public`,
-    dataLabel: `Public dataset · Saudi Employee Attrition (Mendeley)`,
-    problemShort: `Which workforce segments show the highest attrition and merit further investigation?`,
-    summary: `Workforce attrition analysis across engagement, work-life balance and experience bands using Python, SQL and DAX.`,
-    highlight: {
-      heading: `Key Results`,
-      icon: `chart`,
-      text: `43.24% overall attrition across 1,191 employee records, rising to 61.06% in the difficult job-engagement group (an association, not proof of cause).`
-    },
-    chips: [`Python Pandas`, `SQL`, `DAX`, `Power Query`, `Power BI`],
-    featured: true,
-    tags: [`Python`, `SQL`, `Power BI`, `DAX`, `Power Query`],
-    image: `images/shot-hr.webp`,
-    imageSize: [1600, 1212],
-    imageAlt: `Power BI Employee Attrition and Workforce Analytics dashboard: 1,191 employees, 43.24% attrition rate, and attrition by gender, age and sector`,
-    proves: `Power BI KPI dashboard with filters for sector, department, age and experience.`,
-    github: `https://github.com/prasobh-r/Data_Analyst_Projects/tree/main/HR-Attrition-Analytics`,
-    problem: `Analyze employee attrition patterns and identify workforce segments that may need further investigation to support evidence-informed HR decisions.`,
-    scope: `1,191 survey records (515 attrition, 676 active) from the Saudi Employee Attrition Dataset on Mendeley Data, covering job-related factors, engagement and work-life balance.`,
-    process: `Used Python and Pandas for data cleaning and exploratory analysis, SQL for structured analysis, and Power BI with DAX to present workforce KPIs and attrition patterns.`,
-    findings: [
-      `The dataset shows an overall attrition rate of 43.24%.`,
-      `The difficult job-engagement category shows a 61.06% attrition rate.`,
-      `The difficult work-life-balance category shows a 59.91% attrition rate.`,
-      `Employees in the 5–10 years experience band show a 53.20% attrition rate.`
-    ],
-    rigor: {
-      heading: `Interpretation`,
-      text: `These figures describe associations in survey data. They do not establish that any single factor causes employee attrition.`
-    },
-    impact: {
-      heading: `Business Recommendations`,
-      text: `Use the dashboard to investigate engagement, work-life balance, job satisfaction and mid-career retention, then validate findings with additional workforce evidence.`
-    }
-  },
-  {
-    title: `Healthcare ED Throughput Optimization`,
-    tier: `additional`,
-    cardTitle: `Healthcare ED Throughput Optimization`,
-    label: `SQL Server · Python · Power BI`,
-    accent: `cyan`,
-    categories: [`bi`, `ml`],
-    dataType: `synthetic`,
-    dataLabel: `Dataset source unverified · may be simulated`,
-    problemShort: `Where do ED patients wait, and what patterns sit behind patients who leave without being seen (LWBS)?`,
-    summary: `Patient-flow intervals, LWBS patterns and statistical significance tests on 200,000 ED visits, reconciled between SQL Server and Power BI.`,
-    highlight: {
-      heading: `Key Results`,
-      icon: `chart`,
-      text: `200,000 ED visits (2019–2025), with 9.94% leaving without being seen. Five significance tests found no statistically significant link between LWBS and triage score, year, arrival hour or wait time (all p > 0.05).`
-    },
-    chips: [`SQL Server`, `Python`, `SciPy / Statsmodels`, `Hypothesis Testing`, `Power BI`, `DAX`],
-    featured: true,
-    tags: [`SQL Server`, `Python`, `Power BI`],
-    image: `images/shot-ed.webp`,
-    imageSize: [1600, 922],
-    imageAlt: `Power BI Healthcare ED Throughput executive overview: total visits, LWBS rate by year, visits by disposition and a data-quality investigation flag`,
-    proves: `Statistical testing and data-quality scepticism on operational data.`,
-    github: `https://github.com/prasobh-r/Data_Analyst_Projects/tree/main/healthcare-ed-throughput`,
-    problem: `Understand how patients move through the Emergency Department, how long they wait between care stages, what patterns appear in LWBS visits, and whether observed LWBS differences are statistically significant — while documenting how timestamp quality affects operational reporting.`,
-    scope: `200,000 visit-level ED records (49,059 distinct patients) from January 2019 to December 2025: 99,845 discharged, 80,283 admitted and 19,872 LWBS (9.94%). The dataset's original source and licence have not been verified and it may be simulated, so this is an analytical demonstration, not evidence of real hospital performance.`,
-    process: `Validated record counts and timestamp sequences in SQL Server, built analytical views and care-interval calculations, ran chi-square and Mann–Whitney tests in Python (SciPy, Statsmodels) at α = 0.05, reconciled SQL results with Power BI KPIs, and built a four-page Power BI report (overview, patient flow, LWBS deep dive, data quality and limits).`,
-    findings: [
-      `Average care intervals: arrival to triage 32.04 min, triage to doctor 66.87 min, doctor to disposition 164.37 min (each on its own eligible records).`,
-      `LWBS rate by arrival hour ranges from 9.37% (8 AM) to 10.54% (11 AM); by wait-time band, only 9.73%–10.02%.`,
-      `All five significance tests returned p > 0.05, so no statistically significant differences were detected at the 5% level.`,
-      `Data-quality issues: 9,909 visits missing a triage timestamp, 10,000 missing a doctor-seen timestamp, 1,947 with triage before arrival and 920 with disposition before doctor-seen (counts may overlap).`
     ],
     rigor: {
       heading: `Data Honesty`,
-      text: `18,871 of the 19,872 LWBS records carry a doctor-seen timestamp, which questions the source's LWBS classification and is documented as a concern rather than assumed wrong. A p-value above 0.05 does not prove that no relationship exists, and the analysis shows association, not causation.`
+      text: `I generated this dataset in Python, so patterns such as monsoon delays and the Onam spike reflect rules I wrote, not discoveries about a real business. The project demonstrates the build (SQL ETL, star schema, DAX, report design), and no business impact is claimed.`
     },
     impact: {
-      heading: `Takeaway`,
-      text: `Reliable ED reporting depends on valid timestamps. Before drawing operational conclusions, the LWBS classification rules need clarifying, and bed-level occupancy and financial data would be needed. No financial impact is estimated.`
+      heading: `What It Demonstrates`,
+      text: `How a single reporting layer can put revenue, margin, delivery risk and product performance in front of management, and how the KPIs are defined and reconciled between SQL and DAX.`
     }
-  }
+  },
+  /* NEXT: ACTT clinical trial funnel analysis. Copy one object above, fill every field from the
+     finished README (each number must match it), set dataType to `real` or `public` honestly,
+     then add featured: true. Keep the Bank, Marketing, Kerala, ACTT order. */
 ];
 
 /* ============================================================

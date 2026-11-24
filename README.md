@@ -1,6 +1,6 @@
 # Prasobh R — Data Analyst Portfolio
 
-Personal portfolio website for **Prasobh R**, a Data Analyst working with **SQL, Power BI, Excel and Python**. It presents business reporting, KPI dashboards and seven end-to-end analytics case studies.
+Personal portfolio website for **Prasobh R**, a Data Analyst working with **SQL, Power BI, Excel and Python**. It presents business reporting, KPI dashboards and three end-to-end analytics case studies built on real or public datasets.
 
 **Live site:** https://prasobh-r.github.io/portfolio-website/
 
@@ -14,7 +14,7 @@ A plain static site: HTML, CSS and vanilla JavaScript. There is no build step, f
 |---|---|
 | **Hero** | Role line (Data Analyst \| SQL • Power BI • Excel • Python), short summary, resume download, contact icons |
 | **About** | Short analytical approach and three workplace results |
-| **Projects** | Four featured case studies plus an "Additional projects" group, with filters (see below) |
+| **Projects** | Three featured case studies with tool filters (see below) |
 | **Experience & Education** | Work history, degrees and two certificates (Google Data Analytics, NPTEL Database Management Systems) |
 | **Skills** | Core tools (SQL, Power BI, Excel, data quality) and working knowledge (Python, Tableau) |
 | **How I Work** | Five-step analytics workflow |
@@ -22,19 +22,19 @@ A plain static site: HTML, CSS and vanilla JavaScript. There is no build step, f
 
 ### Projects shown
 
-1. **Bank Risk Intelligence** — WOE/IV credit scorecard on real LendingClub data
-2. **Kerala Essential Commodities** — Advanced Excel MIS price-risk early-warning pack on 700K+ official daily price records
-3. **Business Performance 360°** — Power BI executive dashboard on a synthetic retail dataset
-4. **Marketing Intelligence Analytics** — RFM segmentation and campaign response in T-SQL
-5. **RavenStack Subscription Intelligence** — churn and revenue-at-risk analysis on a synthetic SaaS dataset
-6. **HR Attrition Analytics** — workforce attrition patterns from a public survey dataset
-7. **Healthcare ED Throughput Optimization** — patient flow, LWBS patterns and significance tests
+| # | Project | Data | Tools |
+|---|---|---|---|
+| 1 | **Bank Loan Risk Intelligence**: WOE/IV credit scorecard, validated out-of-time and benchmarked against the lender's grade, with an approval-cutoff simulator | Real: LendingClub (Kaggle) | Python, SQL Server, Power BI |
+| 2 | **Marketing Data Quality & Customer Intelligence**: SQL cleaning with an audit trail, 18 validation checks, RFM segments and campaign analysis | Public: Maven Analytics | SQL Server (T-SQL), Power BI |
+| 3 | **Kerala Essential Commodities: Price-Risk MIS**: monthly price-pressure monitoring pack on 700K+ official daily price records, validated in pandas and backtested | Real: Govt. of Kerala, Economics & Statistics | Advanced Excel, Python |
 
-Cards 1-4 are featured; 5-7 sit under "Additional projects".
+In progress, not yet on the site: **ACTT clinical trial funnel analysis**.
 
-Each card shows a dashboard screenshot, a problem statement, key results, a one-line "Shows:" summary, tools, a data-source tag, a **View Case Study** popup (problem, data, approach, findings, limits, impact) and a **View Code on GitHub** link.
+**Filters:** the buttons above the cards (All, SQL, Power BI, Excel, Python) show only projects tagged with that tool. Expected results: SQL shows 1 and 2, Power BI shows 1 and 2, Excel shows 3, Python shows 1 and 3.
 
-**About the numbers:** projects use public or self-generated practice datasets. Figures marked "modelled estimate" are project analysis estimates, not actual client or business results.
+Each card shows a dashboard screenshot, a problem statement, key results, a one-line "Shows:" summary, tools, a data-source tag, a **View Case Study** popup (problem, data, approach, findings, limits, impact) and a **View Code on GitHub** link. The GitHub links point to project folders inside the [Data_Analyst_Projects](https://github.com/prasobh-r/Data_Analyst_Projects) repository.
+
+**About the numbers:** every figure on a card or in a popup comes from that project's own GitHub README, and each case study states its limitations. When a README changes, update `projects.js` to match (see below).
 
 ---
 
@@ -45,7 +45,7 @@ portfolio-website/
 ├── index.html                              page structure and content
 ├── style.css                               all styling
 ├── script.js                               nav, scroll effects, contact form
-├── projects.js                             project data and card renderer
+├── projects.js                             project data, filters and card renderer
 ├── Prasobh_R_Data_Analyst_Resume.pdf       downloadable resume
 ├── images/
 │   ├── avatar.jpg / avatar.webp            profile photo
@@ -58,9 +58,16 @@ portfolio-website/
 ## How to update it
 
 ### Add or edit a project
-Everything about a project lives in **`projects.js`**. Copy one block in the `PROJECTS` array, edit the values and set `featured: true`. Add `tier: 'additional'` to list it under "Additional projects" instead of the main grid. Cards and "Case Study 01…" numbers follow the order of the blocks.
+Everything about a project lives in **`projects.js`**. Copy one block in the `PROJECTS` array, edit the values and set `featured: true`. Cards and "Case Study 01…" numbers follow the order of the blocks. A block with `featured: false` stays in the file but is not shown. Adding `tier: 'additional'` lists a project under an "Additional projects" group instead of the main grid (none are used now).
 
-Key fields: `cardTitle`, `label`, `dataType` (`real`, `public` or `synthetic`), `dataLabel`, `problemShort`, `highlight`, `image`, `imageAlt`, `imageSize`, `proves`, `modelled` (adds the estimate note), `chips`, `github`, and the popup fields `problem`, `scope`, `process`, `findings`, `rigor`, `impact`.
+Key fields: `cardTitle`, `label`, `dataType` (`real`, `public` or `synthetic`), `dataLabel`, `problemShort`, `highlight`, `image`, `imageAlt`, `imageSize`, `proves`, `chips`, `tags`, `github`, `categories`, and the popup fields `problem`, `scope`, `process`, `findings`, `rigor`, `impact`. The optional `modelled` field adds an "estimate, not a real business result" note.
+
+**`categories` decides the filter buttons.** List every tool the project really uses, using the filter ids: `sql`, `powerbi`, `excel`, `python`. A project missing a tag will not appear under that button. When you add a project, also check that its `label`, `chips` and `tags` mention the same tools.
+
+**Keep the numbers in sync.** Copy figures from the project's GitHub README, not from memory. After editing, check that the screenshot in `images/` shows the same numbers as the text.
+
+### Replace a screenshot
+Save the new image as WebP at about 1600 px wide, with the same file name as the old one (for example `images/shot-bank-risk.webp`), and make `imageSize` match its width and height so the layout does not jump. Update `imageAlt` to describe what the new image shows.
 
 ### Change text, metrics or experience
 Edit **`index.html`**. Keep numbers consistent with the resume and the project READMEs.
@@ -107,9 +114,10 @@ Repository **Settings → Pages → Deploy from a branch → `main` / root**. Th
 ## Before sharing the link — checklist
 
 - [ ] Formspree ID added and a test message sent
-- [ ] Resume PDF matches the website (reports per month, project list)
-- [ ] All seven GitHub project links open
-- [ ] Every card shows its screenshot (images/shot-*.webp)
+- [ ] Resume PDF matches the website (project list, same numbers)
+- [ ] All three GitHub project links open the right folder
+- [ ] Every card shows its screenshot (`images/shot-*.webp`) and the numbers in it match the text
+- [ ] Filter buttons give the expected results (SQL: 1, 2; Power BI: 1, 2; Excel: 3; Python: 1, 3)
 - [ ] Resume download works
 - [ ] Profile photo loads
 - [ ] Link preview checked when pasted into LinkedIn or WhatsApp
